@@ -1,0 +1,20 @@
+{% extends 'pages/base.html' %}
+{% block title %} {{title}} {% endblock %}
+{% block content %}
+<div class="container">
+ <div class="row justify-content-center">
+ <div class="col-md-8">
+ <div class="card">
+ <div class="card-header">Success</div>
+ <div class="card-body">
+ <div class="alert alert-success" role="alert">
+ {{message}}
+ </div>
+ <a href="{% url 'index' %}" class="btn btn-primary">View Products</a>
+ <a href="{% url 'form' %}" class="btn btn-secondary">Create Another</a>
+ </div>
+ </div>
+ </div>
+ </div>
+</div>
+{% endblock %}
