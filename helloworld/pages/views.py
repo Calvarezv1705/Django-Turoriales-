@@ -8,6 +8,7 @@ from django.views.generic import ListView, TemplateView
 
 from .models import Product
 
+
 # Create your views here.
 class HomePageView(TemplateView):
     template_name = "pages/home.html"
@@ -33,11 +34,11 @@ class ProductIndexView(View):
     template_name = "products/index.html"
 
     def get(self, request):
-        viewData = {}
-        viewData["title"] = "Products - Online Store"
-        viewData["subtitle"] = "List of products"
-        viewData["products"] = Product.objects.all()
-        return render(request, self.template_name, viewData)
+        view_data = {}
+        view_data["title"] = "Products - Online Store"
+        view_data["subtitle"] = "List of products"
+        view_data["products"] = Product.objects.all()
+        return render(request, self.template_name, view_data)
 
 
 class ProductShowView(View):
@@ -52,13 +53,13 @@ class ProductShowView(View):
             product = get_object_or_404(Product, pk=product_id)
         except (ValueError, IndexError):
             # If the product id is not valid, redirect to the home page
-            return HttpResponseRedirect(reverse('home'))
+            return HttpResponseRedirect(reverse("home"))
 
-        viewData = {}
-        viewData["title"] = product.name + " - Online Store"
-        viewData["subtitle"] = product.name + " - Product information"
-        viewData["product"] = product
-        return render(request, self.template_name, viewData)
+        view_data = {}
+        view_data["title"] = product.name + " - Online Store"
+        view_data["subtitle"] = product.name + " - Product information"
+        view_data["product"] = product
+        return render(request, self.template_name, view_data)
 
 
 class ContactPageView(TemplateView):
@@ -84,44 +85,44 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ['name', 'price']
+        fields = ["name", "price"]
 
     def clean_price(self):
-        price = self.cleaned_data.get('price')
+        price = self.cleaned_data.get("price")
         if price is not None and price <= 0:
-            raise ValidationError('Price must be greater than zero.')
+            raise ValidationError("Price must be greater than zero.")
         return price
 
 
 class ProductCreateView(View):
-    template_name = 'products/create.html'
+    template_name = "products/create.html"
 
     def get(self, request):
         form = ProductForm()
-        viewData = {}
-        viewData["title"] = "Create product"
-        viewData["form"] = form
-        return render(request, self.template_name, viewData)
+        view_data = {}
+        view_data["title"] = "Create product"
+        view_data["form"] = form
+        return render(request, self.template_name, view_data)
 
     def post(self, request):
         form = ProductForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('product-created')
+            return redirect("product-created")
         else:
-            viewData = {}
-            viewData["title"] = "Create product"
-            viewData["form"] = form
-            return render(request, self.template_name, viewData)
+            view_data = {}
+            view_data["title"] = "Create product"
+            view_data["form"] = form
+            return render(request, self.template_name, view_data)
 
 
 class ProductListView(ListView):
     model = Product
-    template_name = 'product_list.html'
-    context_object_name = 'products'
+    template_name = "product_list.html"
+    context_object_name = "products"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Products - Online Store'
-        context['subtitle'] = 'List of products'
+        context["title"] = "Products - Online Store"
+        context["subtitle"] = "List of products"
         return context
