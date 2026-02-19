@@ -78,20 +78,23 @@ class ContactPageView(TemplateView):
         return context
 
 
-class ProductForm(forms.Form):
+class ProductForm(forms.ModelForm):
     name = forms.CharField(required=True)
     price = forms.FloatField(required=True)
 
+    class Meta:
+        model = Product
+        fields = ['name', 'price']
+
     def clean_price(self):
-        price = self.cleaned_data.get("price")
+        price = self.cleaned_data.get('price')
         if price is not None and price <= 0:
-            raise forms.ValidationError("Price must be greater than zero")
+            raise ValidationError('Price must be greater than zero.')
         return price
 
 
 class ProductCreateView(View):
-    template_name = "products/create.html"
-    success_template = "products/success.html"
+    template_name = 'products/create.html'
 
     def get(self, request):
         form = ProductForm()
@@ -103,15 +106,8 @@ class ProductCreateView(View):
     def post(self, request):
         form = ProductForm(request.POST)
         if form.is_valid():
-            Product.objects.create(
-                name=form.cleaned_data["name"],
-                price=form.cleaned_data["price"],
-            )
-
-            viewData = {}
-            viewData["title"] = "Product created"
-            viewData["message"] = "Product created successfully!"
-            return render(request, self.success_template, viewData)
+            form.save()
+            return redirect('product-created')
         else:
             viewData = {}
             viewData["title"] = "Create product"
